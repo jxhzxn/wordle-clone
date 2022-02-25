@@ -234,8 +234,8 @@ let correct = 0;
 let status = 1;
 let gen_word;
 
-const chalk = require('chalk');
-var randomWords = require('random-words');
+// const chalk = require('chalk');
+// var randomWords = require('random-words');
 const express = require("express");
 const router = express.Router();
 const app = express();
