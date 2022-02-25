@@ -253,7 +253,19 @@ app.get("/", async (req, res) => {
         word.push(gen_word[i])
     }
     console.log("WORD - ", gen_word)
-    res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+    res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+});
+
+app.post("/login", async (req, res) => {
+
+    const code = req.body.code;
+
+    if(code == 99){
+        res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+    }else{
+        res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+    }
+    
 });
 
 app.post("/wordle", async (req, res) => {
