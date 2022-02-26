@@ -9,6 +9,11 @@ let g4 = ['', '', '', '', '']
 let g5 = ['', '', '', '', '']
 let g6 = ['', '', '', '', '']
 
+let userDetails = {
+    name : '',
+    email : ''
+}
+
 const word_list = [
     "Adult",
     "Adult",
@@ -234,8 +239,6 @@ let correct = 0;
 let status = 1;
 let gen_word;
 
-// const chalk = require('chalk');
-// var randomWords = require('random-words');
 const express = require("express");
 const router = express.Router();
 const app = express();
@@ -244,8 +247,28 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 let init = false;
 const port = process.env.PORT || 3000;
+const {MongoClient} = require('mongodb');
+
+async function main(user, process) {
+
+    const uri = "mongodb+srv://jxhzxn:test1234@wordle.efu4i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    try {
+        await client.connect();
+        if(process === 'register'){
+            return await registerUser(client, user);
+        }
+        return await loginUser(client, user);
+    } catch (e) {
+        console.log(e)
+        console.error(e);
+    }finally {
+        await client.close();
+    }
+}
 
 app.get("/", async (req, res) => {
+   
     reset();
     const rand = Math.floor(Math.random() * 217)
     gen_word = word_list[rand].toUpperCase()
@@ -253,38 +276,101 @@ app.get("/", async (req, res) => {
         word.push(gen_word[i])
     }
     console.log("WORD - ", gen_word)
+  
     res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
 });
 
+app.get("/play", async (req, res) => {
+   
+    reset();
+    const rand = Math.floor(Math.random() * 217)
+    gen_word = word_list[rand].toUpperCase()
+    for(var i=0; i<5; i++){
+        word.push(gen_word[i])
+    }
+    console.log("WORD - ", gen_word)
+  
+    res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
+
+});
+
 app.post("/login", async (req, res) => {
+    const user = {
+        email : req.body.email
+    }
 
-    const code = req.body.code;
+    if(user.email.length>0){
+        const test = await main(user, 'check').catch(console.error);
 
-    if(code == 99){
-        res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+        console.log(test)
+
+        // console.log(user.name," Started Playing")
+    
+        const code = req.body.code;
+
+        if(test == 1){
+            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
+        }else{
+            res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+        }
+    
+        // if(code == 99){
+        //     res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
+        // }else{
+        //     res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+        // }
     }else{
         res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
     }
+
+  
     
 });
 
-app.post("/wordle", async (req, res) => {
-    if(attempts>=6){
-        console.log("NO MORE ATTEMPTS")
+app.post("/register", async (req, res) => {
+    const user = {
+        name    : req.body.name,
+        email : req.body.email
+    }
+
+    if(user.name.length>0 && user.email.length>0){
+        const test = await main(user, 'register').catch(console.error);
+
+        console.log(test)
+
+        if(test == 1){
+            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
+        }else{
+            res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+        }
     }else{
-        if(req.body.guess.length == 5){
-            start(req.body.guess.toUpperCase());
+        res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+    }
+});
+
+app.get("/wordle", async (req, res) => {
+
+    const guess = req.query.guess;
+
+    // console.log("GUESSS - ", guess)
+    if(attempts>=6){
+        // console.log("NO MORE ATTEMPTS")
+    }else if(guess != undefined){
+        if(guess.length == 5){
+            start(guess.toUpperCase());
         const attempts_left = 6-attempts
         if(attempts_left == 0 && correct<5){
             status = 0;
         }
-        res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: attempts_left, correct : correct , status : status, answer : gen_word  })
+        res.send({g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, correct : correct, answer : gen_word , status : status})
+        // res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: attempts_left, correct : correct , status : status, answer : gen_word  })
         correct = 0;
         }
     }
 });
 
 function start(guessedWord) {
+    
     attempts += 1;
     if (g1[0] === '') {
         g1 = [];
@@ -369,6 +455,48 @@ function reset(){
     color = []
     word = []
     status = 1;
+}
+
+
+
+async function loginUser(client, user){
+
+    let userFound = false;
+
+    const cursor = await client.db("Wordle-DB").collection("users").findOne({email : user.email});
+
+    // console.log(cursor)
+
+    if(cursor){
+        userFound = true;
+    }
+ 
+    // const results = await cursor.toArray();
+
+    if(userFound){
+        console.log("USER FOUND")
+        userDetails.name = cursor.name;
+        userDetails.email = cursor.email;
+        return 1;
+    }else{
+        return 0;
+        // console.log("NEW USER - Added to the DB")
+        // await client.db("Wordle-DB").collection("users").insertOne(user);
+    }
+};
+
+async function registerUser(client, user){
+
+    console.log("NEW USER - Added to the DB")
+    await client.db("Wordle-DB").collection("users").insertOne(user);
+    return 1;
+  
+};
+
+async function getUser(client, user){
+    const cursor = await client.db("Wordle-DB").collection("users").findOne({email : user.email});
+    const results = await cursor.toArray();
+    console.log("FROM DB - ", results)
 }
 
 app.listen(port, () => {

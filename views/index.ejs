@@ -66,7 +66,22 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 650px;
+            height: 600px;
+            padding-top: 0px;
+            width: 450px;
+            background-color: #151D3B;
+            border-radius: 20px;
+            box-shadow: 0 16px 32px 0 rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        .user-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-bottom: 20px;
+            height: 100px;
             width: 500px;
             background-color: #151D3B;
             border-radius: 20px;
@@ -74,17 +89,32 @@
             cursor: pointer;
         }
 
+        .user-info{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .main-container:hover{
             box-shadow: 0 32px 64px 0 rgba(0,0,0,0.2);
         }
 
         .title{
-            margin-top: 0px;
+            margin-top: -50px;
             font-family: 'Poppins', sans-serif;
             font-size: 70px;
             letter-spacing: -3px;
             font-weight: 900;
             color: #D82148;
+        }
+
+        .user{
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            /* letter-spacing: -3px; */
+            font-weight: 900;
+            color: #D82148;
+            margin: 0px 15px 0px 15px;
         }
 
         .sub-title{
@@ -126,8 +156,17 @@
         }
     </style>
 </head>
-<body>
+<body style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
 
+    <div class="user-container">
+        <div>
+            <p class="user" id="title" style="font-size: 32px;">Hi <span style="color: #FBD148;" ><%= user.name %></span></p>
+        </div>
+        <div class="user-info">
+            <p class="user" id="title">Total Played <span style="color: #FBD148; " >6</span></p>
+            <p class="user" id="title">Total Score <span style="color: #FBD148; " >45</span></p> 
+        </div>
+    </div>
 
     <div class="main-container">
 
@@ -136,7 +175,7 @@
         <% }else if(status == 0){ %>
             <p class="title" style="color: #D82148; padding-bottom: 10px;">Ouchh<span style="color: #D82148; font-size: 85px; " >!</span></p>
         <% }else{ %>
-            <p class="title">WORDLE<span style="color: #FBD148; font-size: 85px; " >!</span></p>
+            <p class="title" id="title" style=" padding-bottom: 10px; ">WORDLE<span style="color: #FBD148; font-size: 85px;" >!</span></p>
         <% } %>
 
         
@@ -144,8 +183,9 @@
 
 
             <% if(correct != 5 && status != 0){ %>
-                <form autocomplete="off"  action="/wordle" method="POST">
-                    <input autocomplete="false" type="text" maxlength="5" name="guess" id="wefwe" placeholder="Type Here!">
+                <form>
+                    <input autocomplete="false" type="text" maxlength="5" name="guess" id="guess-input" placeholder="Type Here!">
+                    <button type="submit" id="btn" hidden></button>
                 </form>
             <% } %>
            
@@ -155,51 +195,51 @@
         <div>
 
             <div class="col">
-                <div class="block" style="background-color: <%= color[0] %>;"><%= g1[0] %></div>
-                <div class="block" style="background-color: <%= color[1] %>;"><%= g1[1] %></div>
-                <div class="block" style="background-color: <%= color[2] %>;"><%= g1[2] %></div>
-                <div class="block" style="background-color: <%= color[3] %>;"><%= g1[3] %></div>
-                <div class="block" style="background-color: <%= color[4] %>;"><%= g1[4] %></div>
+                <div class="block" style="background-color: <%= color[0] %>;" id="b1"><%= g1[0] %></div>
+                <div class="block" style="background-color: <%= color[1] %>;" id="b2"><%= g1[1] %></div>
+                <div class="block" style="background-color: <%= color[2] %>;" id="b3"><%= g1[2] %></div>
+                <div class="block" style="background-color: <%= color[3] %>;" id="b4"><%= g1[3] %></div>
+                <div class="block" style="background-color: <%= color[4] %>;" id="b5"><%= g1[4] %></div>
             </div>
         
             <div class="col">
-                <div class="block" style="background-color: <%= color[5] %>;"><%= g2[0] %></div>
-                <div class="block" style="background-color: <%= color[6] %>;"><%= g2[1] %></div>
-                <div class="block" style="background-color: <%= color[7] %>;"><%= g2[2] %></div>
-                <div class="block" style="background-color: <%= color[8] %>;"><%= g2[3] %></div>
-                <div class="block" style="background-color: <%= color[9] %>;"><%= g2[4] %></div>
+                <div class="block" style="background-color: <%= color[5] %>;" id="b6"><%= g2[0] %></div>
+                <div class="block" style="background-color: <%= color[6] %>;" id="b7"><%= g2[1] %></div>
+                <div class="block" style="background-color: <%= color[7] %>;" id="b8"><%= g2[2] %></div>
+                <div class="block" style="background-color: <%= color[8] %>;" id="b9"><%= g2[3] %></div>
+                <div class="block" style="background-color: <%= color[9] %>;" id="b10"><%= g2[4] %></div>
             </div>
         
             <div class="col">
-                <div class="block" style="background-color: <%= color[10] %>;"><%= g3[0] %></div>
-                <div class="block" style="background-color: <%= color[11] %>;"><%= g3[1] %></div>
-                <div class="block" style="background-color: <%= color[12] %>;"><%= g3[2] %></div>
-                <div class="block" style="background-color: <%= color[13] %>;"><%= g3[3] %></div>
-                <div class="block" style="background-color: <%= color[14] %>;"><%= g3[4] %></div>
+                <div class="block" style="background-color: <%= color[10] %>;" id="b11"><%= g3[0] %></div>
+                <div class="block" style="background-color: <%= color[11] %>;" id="b12"><%= g3[1] %></div>
+                <div class="block" style="background-color: <%= color[12] %>;" id="b13"><%= g3[2] %></div>
+                <div class="block" style="background-color: <%= color[13] %>;" id="b14"><%= g3[3] %></div>
+                <div class="block" style="background-color: <%= color[14] %>;" id="b15"><%= g3[4] %></div>
             </div>
         
             <div class="col">
-                <div class="block" style="background-color: <%= color[15] %>;"><%= g4[0] %></div>
-                <div class="block" style="background-color: <%= color[16] %>;"><%= g4[1] %></div>
-                <div class="block" style="background-color: <%= color[17] %>;"><%= g4[2] %></div>
-                <div class="block" style="background-color: <%= color[18] %>;"><%= g4[3] %></div>
-                <div class="block" style="background-color: <%= color[19] %>;"><%= g4[4] %></div>
+                <div class="block" style="background-color: <%= color[15] %>;" id="b16"><%= g4[0] %></div>
+                <div class="block" style="background-color: <%= color[16] %>;" id="b17"><%= g4[1] %></div>
+                <div class="block" style="background-color: <%= color[17] %>;" id="b18"><%= g4[2] %></div>
+                <div class="block" style="background-color: <%= color[18] %>;" id="b19"><%= g4[3] %></div>
+                <div class="block" style="background-color: <%= color[19] %>;" id="b20"><%= g4[4] %></div>
             </div>
         
             <div class="col">
-                <div class="block" style="background-color: <%= color[20] %>;"><%= g5[0] %></div>
-                <div class="block" style="background-color: <%= color[21] %>;"><%= g5[1] %></div>
-                <div class="block" style="background-color: <%= color[22] %>;"><%= g5[2] %></div>
-                <div class="block" style="background-color: <%= color[23] %>;"><%= g5[3] %></div>
-                <div class="block" style="background-color: <%= color[24] %>;"><%= g5[4] %></div>
+                <div class="block" style="background-color: <%= color[20] %>;" id="b21"><%= g5[0] %></div>
+                <div class="block" style="background-color: <%= color[21] %>;" id="b22"><%= g5[1] %></div>
+                <div class="block" style="background-color: <%= color[22] %>;" id="b23"><%= g5[2] %></div>
+                <div class="block" style="background-color: <%= color[23] %>;" id="b24"><%= g5[3] %></div>
+                <div class="block" style="background-color: <%= color[24] %>;" id="b25"><%= g5[4] %></div>
             </div>
         
             <div class="col">
-                <div class="block" style="background-color: <%= color[25] %>;"><%= g6[0] %></div>
-                <div class="block" style="background-color: <%= color[26] %>;"><%= g6[1] %></div>
-                <div class="block" style="background-color: <%= color[27] %>;"><%= g6[2] %></div>
-                <div class="block" style="background-color: <%= color[28] %>;"><%= g6[3] %></div>
-                <div class="block" style="background-color: <%= color[29] %>;"><%= g6[4] %></div>
+                <div class="block" style="background-color: <%= color[25] %>;" id="b26"><%= g6[0] %></div>
+                <div class="block" style="background-color: <%= color[26] %>;" id="b27"><%= g6[1] %></div>
+                <div class="block" style="background-color: <%= color[27] %>;" id="b28"><%= g6[2] %></div>
+                <div class="block" style="background-color: <%= color[28] %>;" id="b29"><%= g6[3] %></div>
+                <div class="block" style="background-color: <%= color[29] %>;" id="b30"><%= g6[4] %></div>
             </div>
 
         </div>
@@ -208,13 +248,15 @@
     
         <!-- <button>reset</button> -->
 
-        <% if(status == 0){ %>
+        <!-- <% if(status == 0){ %>
         <p class="sub-title"><span style="color: #2FDD92; font-size: 30px; letter-spacing: -2px;" ><%= answer %></span></p>
         <a style="margin-top: -10px;" class="button" href="/">Play Again</a>
         <% }else if(correct == 5){ %>
-        <a class="button" href="/">Play Again</a>
+        
 
-        <% } %>
+        <% } %> -->
+        <p class="sub-title" id="correct-answer" style="display: none; color: #2FDD92; font-size: 30px; letter-spacing: -2px;"><span style="color: #2FDD92; font-size: 30px; letter-spacing: -2px;" ></span></p>
+        <a class="button" id="play-again" href="/play" style="display: none; margin-top: -20px;">Play Again</a>
 
     
       
@@ -228,11 +270,102 @@
 
 <script>
      
-        $('document').ready(()=>{
+        $('#btn').click((event)=>{
+
+            event.preventDefault();
+
+            let guess = document.getElementById('guess-input'). value;
+
+            document.getElementById('guess-input').value = null;
       
-          $.ajax({url: "/wordle", success: function(result){
+          $.ajax({
+              url: "/wordle", 
+              data: {
+                guess : guess
+              },
+              success: function(result){
 
+                document.getElementById("b1").innerHTML = result.g1[0];
+                document.getElementById("b2").innerHTML = result.g1[1];
+                document.getElementById("b3").innerHTML = result.g1[2];
+                document.getElementById("b4").innerHTML = result.g1[3];
+                document.getElementById("b5").innerHTML = result.g1[4];
+                document.getElementById('b1').style.backgroundColor = result.color[0];
+                document.getElementById('b2').style.backgroundColor = result.color[1];
+                document.getElementById('b3').style.backgroundColor = result.color[2];
+                document.getElementById('b4').style.backgroundColor = result.color[3];
+                document.getElementById('b5').style.backgroundColor = result.color[4];
 
+                document.getElementById("b6").innerHTML = result.g2[0];
+                document.getElementById("b7").innerHTML = result.g2[1];
+                document.getElementById("b8").innerHTML = result.g2[2];
+                document.getElementById("b9").innerHTML = result.g2[3];
+                document.getElementById("b10").innerHTML = result.g2[4];
+                document.getElementById("b6").style.backgroundColor = result.color[5];
+                document.getElementById("b7").style.backgroundColor = result.color[6];
+                document.getElementById("b8").style.backgroundColor = result.color[7];
+                document.getElementById("b9").style.backgroundColor = result.color[8];
+                document.getElementById("b10").style.backgroundColor = result.color[9];
+
+                document.getElementById("b11").innerHTML = result.g3[0];
+                document.getElementById("b12").innerHTML = result.g3[1];
+                document.getElementById("b13").innerHTML = result.g3[2];
+                document.getElementById("b14").innerHTML = result.g3[3];
+                document.getElementById("b15").innerHTML = result.g3[4];
+                document.getElementById("b11").style.backgroundColor = result.color[10];
+                document.getElementById("b12").style.backgroundColor = result.color[11];
+                document.getElementById("b13").style.backgroundColor = result.color[12];
+                document.getElementById("b14").style.backgroundColor = result.color[13];
+                document.getElementById("b15").style.backgroundColor = result.color[14];
+
+                document.getElementById("b16").innerHTML = result.g4[0];
+                document.getElementById("b17").innerHTML = result.g4[1];
+                document.getElementById("b18").innerHTML = result.g4[2];
+                document.getElementById("b19").innerHTML = result.g4[3];
+                document.getElementById("b20").innerHTML = result.g4[4];
+                document.getElementById("b16").style.backgroundColor = result.color[15];
+                document.getElementById("b17").style.backgroundColor = result.color[16];
+                document.getElementById("b18").style.backgroundColor = result.color[17];
+                document.getElementById("b19").style.backgroundColor = result.color[18];
+                document.getElementById("b20").style.backgroundColor = result.color[19];
+
+                document.getElementById("b21").innerHTML = result.g5[0];
+                document.getElementById("b22").innerHTML = result.g5[1];
+                document.getElementById("b23").innerHTML = result.g5[2];
+                document.getElementById("b24").innerHTML = result.g5[3];
+                document.getElementById("b25").innerHTML = result.g5[4];
+                document.getElementById("b21").style.backgroundColor = result.color[20];
+                document.getElementById("b22").style.backgroundColor = result.color[21];
+                document.getElementById("b23").style.backgroundColor = result.color[22];
+                document.getElementById("b24").style.backgroundColor = result.color[23];
+                document.getElementById("b25").style.backgroundColor = result.color[24];
+
+                document.getElementById("b26").innerHTML = result.g6[0];
+                document.getElementById("b27").innerHTML = result.g6[1];
+                document.getElementById("b28").innerHTML = result.g6[2];
+                document.getElementById("b29").innerHTML = result.g6[3];
+                document.getElementById("b30").innerHTML = result.g6[4];
+                document.getElementById("b26").style.backgroundColor = result.color[25];
+                document.getElementById("b27").style.backgroundColor = result.color[26];
+                document.getElementById("b28").style.backgroundColor = result.color[27];
+                document.getElementById("b29").style.backgroundColor = result.color[28];
+                document.getElementById("b30").style.backgroundColor = result.color[29];
+
+                if(result.correct == 5){
+                    document.getElementById("title").innerHTML = `Yayy!!`;
+                    document.getElementById("title").style.color = '#2FDD92';
+                    document.getElementById("title").style.paddingBottom = '10px';
+                    document.getElementById("guess-input").style.display = "none";
+                    document.getElementById("play-again").style.display = "";
+                    document.getElementById("play-again").style.marginTop = "20px";
+                }else if(result.status == 0){
+                    document.getElementById("title").innerHTML = `Ouch!`;
+                    document.getElementById("title").style.color = '#D82148';
+                    document.getElementById("correct-answer").style.display = "";
+                    document.getElementById("guess-input").style.display = "none";
+                    document.getElementById("correct-answer").innerHTML = result.answer;
+                    document.getElementById("play-again").style.display = "";
+                }
         
           }});
         })
