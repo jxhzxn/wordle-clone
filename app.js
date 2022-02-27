@@ -256,10 +256,12 @@ var session;
 
 app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
-    saveUninitialized: true,
-    cookie: { maxAge: oneDay },
+    // saveUninitialized: true,
+    // cookie: { maxAge: oneDay },
     resave: false
 }));
+
+// app.use(sessions);
 
 app.use(cookieParser());
 
