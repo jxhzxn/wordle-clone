@@ -66,8 +66,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 600px;
-            padding-top: 0px;
+            padding: 40px 0px 40px 0px;
             width: 450px;
             background-color: #151D3B;
             border-radius: 20px;
@@ -101,12 +100,31 @@
         }
 
         .title{
-            margin-top: -10px;
             font-family: 'Poppins', sans-serif;
             font-size: 70px;
             letter-spacing: -3px;
             font-weight: 900;
             color: #D82148;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: -25px;
+        }
+
+        .first-container{
+            /* background-color: red; */
+            padding: 0px 0px 0px 0px;
+        }
+
+        .second-container{
+            /* background-color: green; */
+            padding: 0px 0px 10px 0px;
+        }
+
+        .third-container{
+            /* background-color: pink; */
         }
 
         .user{
@@ -115,7 +133,8 @@
             /* letter-spacing: -3px; */
             font-weight: 900;
             color: #D82148;
-            margin: 0px 15px 0px 15px;
+            margin: 0;
+            /* margin: 0px 15px 0px 15px; */
         }
 
         .sub-title{
@@ -124,6 +143,10 @@
             letter-spacing: 1px;
             font-weight: 700;
             color: #D82148;
+            margin-top: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .button{
@@ -155,8 +178,8 @@
             border: none;
             font-family: 'Poppins', sans-serif;
             font-size: 15px;
-            padding: 5px;
-            letter-spacing: 0px;
+            padding: 0px;
+            letter-spacing: 0px 0px 10px 0px;
             cursor: pointer;
             font-weight: 800;
             /* background-color: #2FDD92;
@@ -195,35 +218,57 @@
 
     </style>
 </head>
-<body style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+<body style="display: flex; justify-content: center; align-items: center; flex-direction: column;" id="body">
 
 
 
-    <div class="main-container">
+    <div class="main-container" id="main-container">
 
-        <% if(correct == 5){ %>
-            <p class="title" style="color: #2FDD92; padding-bottom: 10px; padding-top: 10px;">Yayy<span style="color: #D82148; font-size: 85px; " >!</span></p>
-        <% }else if(status == 0){ %>
-            <p class="title" style="color: #D82148; padding-bottom: 10px; padding-top: 10px;">Ouchh<span style="color: #D82148; font-size: 85px; " >!</span></p>
-        <% }else{ %>
-            <p class="title" id="title">WORDLE<span style="color: #FBD148; font-size: 85px;" >!</span></p>
-        <% } %>
+
+       
+
+            <div class="first-container">
+                <p class="user" id="user-name" style="font-size: 20px;">Hi, <span style="color: #FBD148;" > <%= user.name %></span></p>
+                <% if(correct == 5){ %>
+                    <p class="title" style="color: #2FDD92;">Yayy<span style="color: #D82148;" >!</span></p>
+                <% }else if(status == 0){ %>
+                    <p class="title" style="color: #D82148;">Ouchh<span style="color: #D82148;" >!</span></p>
+                <% }else{ %>
+                    <p class="title" id="title">WORDLE<span style="color: #FBD148;" >!</span></p>
+                <% } %>
+
+                <p class="sub-title" id="correct-answer" style="display: none; color: #2FDD92; font-size: 30px; letter-spacing: -2px;"> <span style="color: #2FDD92; font-size: 30px; letter-spacing: -2px;" ></span></p>
+                <a class="text-button" id="play-again" href="/play" style="display: none; margin-top: 10px; padding-bottom: 20px;">Play Again</a>
+            </div>
+
+            <!-- <div style="margin-top: -100px;">
+                <p class="user" style="font-size: 20px;"><span style="color: #FBD148;" ><%= user.name %></span></p>
+            </div>
+            <div class="user-info">
+                <p class="user">Total Played <span style="color: #FBD148; " >-</span></p>
+                <p class="user">Total Score <span style="color: #FBD148; " >-</span></p> 
+            </div> -->
+
+
+
+
+       
 
         
-        <div style="margin-top: -80px;">
+        <div class="second-container">
 
 
-            <% if(correct != 5 && status != 0){ %>
+         
                 <form style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                     <input autocomplete="false" type="text" maxlength="5" name="guess" id="guess-input" placeholder="Type Here!">
                     <button type="submit" id="btn" class="button">Enter</button>
                 </form>
-            <% } %>
+        
            
         
         </div>
 
-        <div>
+        <div class="third-container" id="third-container">
 
             <div class="col">
                 <div class="block" style="background-color: <%= color[0] %>;" id="b1"><%= g1[0] %></div>
@@ -277,33 +322,14 @@
     
     
     
-        <!-- <button>reset</button> -->
-
-        <!-- <% if(status == 0){ %>
-        <p class="sub-title"><span style="color: #2FDD92; font-size: 30px; letter-spacing: -2px;" ><%= answer %></span></p>
-        <a style="margin-top: -10px;" class="button" href="/">Play Again</a>
-        <% }else if(correct == 5){ %>
-        
-
-        <% } %> -->
-        <p class="sub-title" id="correct-answer" style="display: none; color: #2FDD92; font-size: 30px; letter-spacing: -2px;"><span style="color: #2FDD92; font-size: 30px; letter-spacing: -2px;" ></span></p>
-        <a class="text-button" id="play-again" href="/play" style="display: none; margin-top: -20px;">Play Again</a>
+      
+     
 
     
       
 
     </div>
 
-
-    <div class="user-container">
-        <div>
-            <p class="user" style="font-size: 32px;"><span style="color: #FBD148;" ><%= user.name %></span></p>
-        </div>
-        <div class="user-info">
-            <p class="user">Total Played <span style="color: #FBD148; " >-</span></p>
-            <p class="user">Total Score <span style="color: #FBD148; " >-</span></p> 
-        </div>
-    </div>
 
 
 
@@ -398,15 +424,23 @@
                     document.getElementById("title").style.color = '#2FDD92';
                     document.getElementById("title").style.paddingBottom = '10px';
                     document.getElementById("guess-input").style.display = "none";
+                    document.getElementById("btn").style.display = "none";
+                    document.getElementById("user-name").style.display = "none";
+
                     document.getElementById("play-again").style.display = "";
                     document.getElementById("play-again").style.marginTop = "20px";
+                    document.getElementById("body").style.backgroundColor = "#2FDD92";
                 }else if(result.status == 0){
                     document.getElementById("title").innerHTML = `Ouch!`;
                     document.getElementById("title").style.color = '#D82148';
                     document.getElementById("correct-answer").style.display = "";
                     document.getElementById("guess-input").style.display = "none";
-                    document.getElementById("correct-answer").innerHTML = result.answer;
+                    document.getElementById("third-container").style.display = "none";
+                    document.getElementById("user-name").style.display = "none";
+                    document.getElementById("btn").style.display = "none";
+                    document.getElementById("correct-answer").innerHTML = 'Answer - '+result.answer;
                     document.getElementById("play-again").style.display = "";
+                    document.getElementById("body").style.backgroundColor = "#D82148";
                 }
         
           }});

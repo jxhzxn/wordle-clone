@@ -306,7 +306,7 @@ app.get("/play", async (req, res) => {
     console.log('LOGGED IN USER - ', session.userEmail)
     const email = session.userEmail;
     reset();
-    const rand = Math.floor(Math.random() * 217)
+    const rand = Math.floor(Math.random() * 213)
     gen_word = word_list[rand].toUpperCase()
     for (var i = 0; i < 5; i++) {
         word.push(gen_word[i])
@@ -349,7 +349,8 @@ app.post("/login", async (req, res) => {
                 name : session.name,
                 email : session.email
             }
-            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word, user: user })
+            res.redirect('/play')
+            // res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word, user: user })
         }
 
     } else {
@@ -519,6 +520,8 @@ async function loginUser(client, user) {
 async function registerUser(client, user) {
 
     console.log("NEW USER - Added to the DB")
+    session.name = user.name,
+    session.email = user.email
     await client.db("Wordle-DB").collection("users").insertOne(user);
     return 1;
 
