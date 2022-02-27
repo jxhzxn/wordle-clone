@@ -80,9 +80,10 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            margin-bottom: 20px;
+            /* margin-bottom: 20px; */
+            margin-top: 10px;
             height: 100px;
-            width: 500px;
+            width: 400px;
             background-color: #151D3B;
             border-radius: 20px;
             box-shadow: 0 16px 32px 0 rgba(0,0,0,0.2);
@@ -100,7 +101,7 @@
         }
 
         .title{
-            margin-top: -50px;
+            margin-top: -10px;
             font-family: 'Poppins', sans-serif;
             font-size: 70px;
             letter-spacing: -3px;
@@ -138,44 +139,74 @@
             background-color: #D82148; */
             color: #FBD148;
             border-radius: 3px;
-            margin-top: 20px;
-            /* background-color: #D82148; */
+            margin: 0px 0px 5px 0px;
+            background-color: #FBD148;
             color: #2FDD92;
             color: #FBD148;
+            color: #D82148;
+            width: 280px;
+
             /* color: #D82148; */
 
             /* color: #2FDD92; */
         }
 
+        .text-button{
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            padding: 5px;
+            letter-spacing: 0px;
+            cursor: pointer;
+            font-weight: 800;
+            /* background-color: #2FDD92;
+            background-color: #FBD148;
+            background-color: #D82148; */
+            color: #FBD148;
+            border-radius: 3px;
+            /* margin: 0px 0px 5px 0px; */
+            /* background-color: #FBD148; */
+            color: #2FDD92;
+            color: #FBD148;
+            width: 280px;
+
+            /* color: #D82148; */
+
+            /* color: #2FDD92; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .button:hover{
-            color: #D82148;
+            color: #FBD148;
+            background-color: #D82148;
+
+        }
+
+        .text-button:hover{
+            color: #2FDD92;
+
         }
 
         a{
             text-decoration: none;
         }
+
     </style>
 </head>
 <body style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
 
-    <div class="user-container">
-        <div>
-            <p class="user" id="title" style="font-size: 32px;">Hi <span style="color: #FBD148;" ><%= user.name %></span></p>
-        </div>
-        <div class="user-info">
-            <p class="user" id="title">Total Played <span style="color: #FBD148; " >6</span></p>
-            <p class="user" id="title">Total Score <span style="color: #FBD148; " >45</span></p> 
-        </div>
-    </div>
+
 
     <div class="main-container">
 
         <% if(correct == 5){ %>
-            <p class="title" style="color: #2FDD92; padding-bottom: 10px;">Yayy<span style="color: #D82148; font-size: 85px; " >!</span></p>
+            <p class="title" style="color: #2FDD92; padding-bottom: 10px; padding-top: 10px;">Yayy<span style="color: #D82148; font-size: 85px; " >!</span></p>
         <% }else if(status == 0){ %>
-            <p class="title" style="color: #D82148; padding-bottom: 10px;">Ouchh<span style="color: #D82148; font-size: 85px; " >!</span></p>
+            <p class="title" style="color: #D82148; padding-bottom: 10px; padding-top: 10px;">Ouchh<span style="color: #D82148; font-size: 85px; " >!</span></p>
         <% }else{ %>
-            <p class="title" id="title" style=" padding-bottom: 10px; ">WORDLE<span style="color: #FBD148; font-size: 85px;" >!</span></p>
+            <p class="title" id="title">WORDLE<span style="color: #FBD148; font-size: 85px;" >!</span></p>
         <% } %>
 
         
@@ -183,9 +214,9 @@
 
 
             <% if(correct != 5 && status != 0){ %>
-                <form>
+                <form style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                     <input autocomplete="false" type="text" maxlength="5" name="guess" id="guess-input" placeholder="Type Here!">
-                    <button type="submit" id="btn" hidden></button>
+                    <button type="submit" id="btn" class="button">Enter</button>
                 </form>
             <% } %>
            
@@ -256,11 +287,22 @@
 
         <% } %> -->
         <p class="sub-title" id="correct-answer" style="display: none; color: #2FDD92; font-size: 30px; letter-spacing: -2px;"><span style="color: #2FDD92; font-size: 30px; letter-spacing: -2px;" ></span></p>
-        <a class="button" id="play-again" href="/play" style="display: none; margin-top: -20px;">Play Again</a>
+        <a class="text-button" id="play-again" href="/play" style="display: none; margin-top: -20px;">Play Again</a>
 
     
       
 
+    </div>
+
+
+    <div class="user-container">
+        <div>
+            <p class="user" style="font-size: 32px;"><span style="color: #FBD148;" ><%= user.name %></span></p>
+        </div>
+        <div class="user-info">
+            <p class="user">Total Played <span style="color: #FBD148; " >-</span></p>
+            <p class="user">Total Score <span style="color: #FBD148; " >-</span></p> 
+        </div>
     </div>
 
 
@@ -369,6 +411,20 @@
         
           }});
         })
+
+
+
+
+$('#play-again').ready((event) => {
+
+    $.ajax({
+        url: "/update", success: function (result) {
+            
+        }
+    });
+})
+
+
 
 </script>
 </html>

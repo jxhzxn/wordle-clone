@@ -2,6 +2,8 @@ let word = []
 let guessOne = []
 let found = []
 
+let userPoints = 0;
+
 let g1 = ['', '', '', '', '']
 let g2 = ['', '', '', '', '']
 let g3 = ['', '', '', '', '']
@@ -10,8 +12,8 @@ let g5 = ['', '', '', '', '']
 let g6 = ['', '', '', '', '']
 
 let userDetails = {
-    name : '',
-    email : ''
+    name: '',
+    email: ''
 }
 
 const word_list = [
@@ -241,13 +243,29 @@ let gen_word;
 
 const express = require("express");
 const router = express.Router();
+const cookieParser = require("cookie-parser");
+const sessions = require('express-session');
 const app = express();
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const oneDay = 1000 * 60 * 60 * 24;
+
+var session;
+
+app.use(sessions({
+    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+    saveUninitialized: true,
+    cookie: { maxAge: oneDay },
+    resave: false
+}));
+
+app.use(cookieParser());
+
 let init = false;
 const port = process.env.PORT || 3000;
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 async function main(user, process) {
 
@@ -255,96 +273,115 @@ async function main(user, process) {
     const client = new MongoClient(uri);
     try {
         await client.connect();
-        if(process === 'register'){
+        if (process === 'register') {
             return await registerUser(client, user);
+        }else if(process === 'get'){
+            return await getUserDetails(client, user);
+        }else if(process === 'update'){
+            await updateScore(client, 10)
         }
         return await loginUser(client, user);
     } catch (e) {
         console.log(e)
         console.error(e);
-    }finally {
+    } finally {
         await client.close();
     }
 }
 
 app.get("/", async (req, res) => {
-   
-    reset();
-    const rand = Math.floor(Math.random() * 217)
-    gen_word = word_list[rand].toUpperCase()
-    for(var i=0; i<5; i++){
-        word.push(gen_word[i])
+
+    session = req.session;
+
+    if (req.session.userEmail) {
+        // console.log('already logged. LOGGED IN USER - ', session.userEmail)
+        res.redirect('/play')
+    } else {
+        res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word })
     }
-    console.log("WORD - ", gen_word)
-  
-    res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
 });
 
 app.get("/play", async (req, res) => {
-   
+
+    console.log('LOGGED IN USER - ', session.userEmail)
+    const email = session.userEmail;
     reset();
     const rand = Math.floor(Math.random() * 217)
     gen_word = word_list[rand].toUpperCase()
-    for(var i=0; i<5; i++){
+    for (var i = 0; i < 5; i++) {
         word.push(gen_word[i])
     }
     console.log("WORD - ", gen_word)
   
-    res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
-
+    const user = {
+        name : session.name,
+        email : session.email
+    }
+    res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word, user: user })
 });
 
 app.post("/login", async (req, res) => {
+
+    session = req.session;
+    session.userEmail = req.body.email
+
     const user = {
-        email : req.body.email
+        email: session.userEmail
     }
 
-    if(user.email.length>0){
+    if (user.email.length > 0) {
         const test = await main(user, 'check').catch(console.error);
 
         console.log(test)
 
         // console.log(user.name," Started Playing")
-    
+
         const code = req.body.code;
 
-        if(test == 1){
-            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
-        }else{
-            res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+        if (test == 0) {
+            res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word })
+        } else {
+            console.log('userrrrr - ', test)
+            session.email = test.email;
+            session.name = test.name;
+
+            const user = {
+                name : session.name,
+                email : session.email
+            }
+            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word, user: user })
         }
-    
-        // if(code == 99){
-        //     res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
-        // }else{
-        //     res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
-        // }
-    }else{
-        res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+
+    } else {
+        res.render('login.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word })
     }
 
-  
-    
+
+
 });
 
 app.post("/register", async (req, res) => {
     const user = {
-        name    : req.body.name,
-        email : req.body.email
+        name: req.body.name,
+        email: req.body.email
     }
 
-    if(user.name.length>0 && user.email.length>0){
+    if (user.name.length > 0 && user.email.length > 0) {
         const test = await main(user, 'register').catch(console.error);
 
         console.log(test)
 
-        if(test == 1){
-            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word, user: userDetails})
-        }else{
-            res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+        if (test == 1) {
+            const user = {
+                name : session.name,
+                email : session.email
+            }
+            res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word, user: user })
+        } else {
+            res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word })
         }
-    }else{
-        res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct : correct , status : status, answer : gen_word})
+    } else {
+        res.render('register.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: 6, correct: correct, status: status, answer: gen_word })
     }
 });
 
@@ -352,25 +389,38 @@ app.get("/wordle", async (req, res) => {
 
     const guess = req.query.guess;
 
-    // console.log("GUESSS - ", guess)
-    if(attempts>=6){
+    if (attempts >= 6) {
         // console.log("NO MORE ATTEMPTS")
-    }else if(guess != undefined){
-        if(guess.length == 5){
+    } else if (guess != undefined) {
+        if (guess.length == 5) {
             start(guess.toUpperCase());
-        const attempts_left = 6-attempts
-        if(attempts_left == 0 && correct<5){
-            status = 0;
-        }
-        res.send({g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, correct : correct, answer : gen_word , status : status})
-        // res.render('index.ejs', { g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, attempts: attempts_left, correct : correct , status : status, answer : gen_word  })
-        correct = 0;
+            const attempts_left = 6 - attempts
+            if (attempts_left == 0 && correct < 5) {
+                status = 0;
+            }
+
+            calculatePoints();
+
+            res.send({ g1: g1, g2: g2, g3: g3, g4: g4, g5: g5, g6: g6, color: color, correct: correct, answer: gen_word, status: status })
+            correct = 0;
         }
     }
 });
 
+app.get("/update", async (req, res) => {
+    console.log('update score')
+    await main('user', 'update').catch(console.error);
+});
+
+function calculatePoints() {
+    if (correct == 5) {
+        userPoints += 5;
+    }
+    console.log("POINTS - ", userPoints)
+}
+
 function start(guessedWord) {
-    
+
     attempts += 1;
     if (g1[0] === '') {
         g1 = [];
@@ -418,7 +468,6 @@ function start(guessedWord) {
 
     for (var i = 0; i < found.length; i++) {
         if (found[i] === word[i]) {
-            // process.stdout.write(chalk.green.inverse(guessOne[i]))
             correct += 1;
             color.push('#2FDD92')
         } else {
@@ -441,7 +490,60 @@ function start(guessedWord) {
     console.log('')
 }
 
-function reset(){
+
+
+
+
+async function loginUser(client, user) {
+
+    let userFound = false;
+    const cursor = await client.db("Wordle-DB").collection("users").findOne({ email: session.userEmail });
+
+    if (cursor) {
+        userFound = true;
+    }
+
+    // const results = await cursor.toArray();
+
+    if (userFound) {
+        console.log("USER FOUND")
+        session.userName = cursor.name;
+        userDetails.name = session.userName;
+        userDetails.email = cursor.email;
+        return cursor;
+    } else {
+        return 0;
+    }
+};
+
+async function registerUser(client, user) {
+
+    console.log("NEW USER - Added to the DB")
+    await client.db("Wordle-DB").collection("users").insertOne(user);
+    return 1;
+
+};
+
+async function updateScore(client, score) {
+
+    const cursor = await client.db("Wordle-DB").collection("users").findOne({ email: session.userEmail });
+    var query = { email: session.userEmail };
+    if(cursor.score){
+        var values = { $set: {score: cursor.score + score} };
+    }else{
+        var values = { $set: {score: score} };
+    }
+    
+    await client.db("Wordle-DB").collection("users").updateOne(query, values);
+
+};
+
+async function getUserDetails(client, userEmail){
+    const cursor = await client.db("Wordle-DB").collection("users").findOne({email : userEmail});
+    return cursor;
+}
+
+function reset() {
     guessOne = [];
     found = [];
     attempts = 0;
@@ -455,48 +557,6 @@ function reset(){
     color = []
     word = []
     status = 1;
-}
-
-
-
-async function loginUser(client, user){
-
-    let userFound = false;
-
-    const cursor = await client.db("Wordle-DB").collection("users").findOne({email : user.email});
-
-    // console.log(cursor)
-
-    if(cursor){
-        userFound = true;
-    }
- 
-    // const results = await cursor.toArray();
-
-    if(userFound){
-        console.log("USER FOUND")
-        userDetails.name = cursor.name;
-        userDetails.email = cursor.email;
-        return 1;
-    }else{
-        return 0;
-        // console.log("NEW USER - Added to the DB")
-        // await client.db("Wordle-DB").collection("users").insertOne(user);
-    }
-};
-
-async function registerUser(client, user){
-
-    console.log("NEW USER - Added to the DB")
-    await client.db("Wordle-DB").collection("users").insertOne(user);
-    return 1;
-  
-};
-
-async function getUser(client, user){
-    const cursor = await client.db("Wordle-DB").collection("users").findOne({email : user.email});
-    const results = await cursor.toArray();
-    console.log("FROM DB - ", results)
 }
 
 app.listen(port, () => {
