@@ -254,12 +254,23 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 var session;
 
+app.set('trust proxy', 1)
+// app.use(sessions({
+//     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+//     saveUninitialized: false,
+//     resave: false,
+//     // cookie: { maxAge: oneDay },
+//     resave: false
+// }));
+
 app.use(sessions({
-    secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
-    // saveUninitialized: true,
-    // cookie: { maxAge: oneDay },
-    resave: false
-}));
+    resave: false,
+    saveUninitialized: true,
+    secret: 'your secret text',
+    cookie: {
+      secure: (process.env.NODE_ENV && process.env.NODE_ENV == 'production') ? true:false
+    }
+  }))
 
 // app.use(sessions);
 
