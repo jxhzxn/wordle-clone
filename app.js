@@ -254,10 +254,6 @@ const oneDay = 1000 * 60 * 60 * 24;
 
 var session;
 
-if (app.get('env') === 'production') {
-    app.set('trust proxy', 1); // trust first proxy
-    sessions.cookie.secure = true; // serve secure cookies
-  }
 // app.use(sessions({
 //     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
 //     saveUninitialized: false,
@@ -269,9 +265,13 @@ if (app.get('env') === 'production') {
 app.use(sessions({
     resave: false,
     saveUninitialized: true,
-    secret: 'your secret text',
+    key: 'sid',
+    secret: 'abcde',
+    proxy: process.env.NODE_ENV === "production",
     cookie: {
-      secure: (process.env.NODE_ENV && process.env.NODE_ENV == 'production') ? true:false
+        secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+        maxAge: 3600000
     }
   }))
 
