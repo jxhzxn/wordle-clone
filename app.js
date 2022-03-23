@@ -244,7 +244,8 @@ let gen_word;
 const express = require("express");
 const router = express.Router();
 const cookieParser = require("cookie-parser");
-const sessions = require('express-session');
+// const sessions = require('express-session');
+const sessions = require('cookie-session');
 const app = express();
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());
